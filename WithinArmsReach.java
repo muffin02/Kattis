@@ -4,7 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
-public class CP{
+public class WithinArmsReach{
     static int MAX = Integer.MAX_VALUE, MIN = Integer.MIN_VALUE;
     static FastScanner sc = new FastScanner();
     static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
