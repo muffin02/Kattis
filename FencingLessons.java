@@ -7,8 +7,6 @@ public class FencingLessons{
     static FastScanner sc = new FastScanner();
     static int MAX = Integer.MAX_VALUE;
     static int MIN = Integer.MIN_VALUE;
-    static TreeSet<Integer> ts = new TreeSet<Integer>();
-    static HashSet<Long> s = new HashSet<Long>();
     public static void main(String[] args) {
         solve();
         out.close();
