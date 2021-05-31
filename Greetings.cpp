@@ -43,13 +43,11 @@ ll solve(int mask, int idx){
     }
     dp[mask][idx] = 1e18;
     if(idx == 1){
-        //just assign the rest of the papers to one envelope.
         dp[mask][idx] = min(dp[mask][idx], cost[mask]);
         return dp[mask][idx];
     }
 
     for(int i = mask; i > 0; i = (i-1)&mask){
-        // i is a subset of mask
         dp[mask][idx] = min(dp[mask][idx], cost[i] + solve(i^mask, idx-1));
     }
     return dp[mask][idx];
@@ -70,7 +68,6 @@ int main(){
         ll maxH = 0, maxW = 0, c = 0;
         for(int j = 0; j < n; ++j){
             if((i>>j)&1){
-                //j is included
                 maxH = max(maxH, A[j][0]);
                 maxW = max(maxW, A[j][1]);
             }
