@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.math.BigInteger;
     
-public class CP{
+public class Boom{
     private static int MAX = Integer.MAX_VALUE;
     private static int MIN = Integer.MIN_VALUE;
     private static int R;
