@@ -78,8 +78,7 @@ void solve(){
 
     vector<bool> isParent(1000001, false);
     for(int i = 0; i <= B-A; ++i){
-        find(i);
-        isParent[a[i]] = true;
+        isParent[find(i)] = true;
     }
 
     int res = 0;
