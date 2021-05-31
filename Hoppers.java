@@ -7,6 +7,7 @@ public class Hoppers{
     static int MAX = Integer.MAX_VALUE, MIN = Integer.MIN_VALUE;
     static FastScanner sc = new FastScanner();
     static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+    static int size;
     public static void main(String[] args){
         solve();
         out.close();
