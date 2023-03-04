@@ -1,14 +1,8 @@
+```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
 const int M = 998244353;
-typedef unsigned long long ull;
-typedef long long ll;
-ll modmul(ll a, ll b) {
-    ll ret = a * b - M * ll(1.L / M * a * b);
-    return ret + M * (ret < 0) - M * (ret >= (ll)M);
-}
-
 void test_case() {
     int n, k, m; cin >> n >> k >> m;
     vector<long long> b(m + 1);
@@ -44,19 +38,19 @@ void test_case() {
         }
     }
 
-    vector<long long> fact(m + 5, 1), ifact(m + 5, 1), r(m + 5, 1);
+    vector<long long> fact(m + 5, 1), ifact(m + 5, 1), get_inv(m + 5, 1);
     for(int i = 2; i <= m; ++i) {
         fact[i] = fact[i - 1] * i % M;
-        r[i] = (M - (M / i) * r[M % i] % M) % M;
-        ifact[i] = ifact[i - 1] * r[i] % M;
+        get_inv[i] = (M - (M / i) * get_inv[M % i] % M) % M;
+        ifact[i] = ifact[i - 1] * get_inv[i] % M;
     }
 
     long long res = 0;
     for(int i = 0; i <= m; ++i) {
         int p = __builtin_popcount(i) - k;
         if(p >= 0 && b[i] - n >= 0) {
-            long long nCk = modmul(modmul(fact[p + k - 1], ifact[k - 1]), ifact[p]);
-            res = (res + modmul(modmul(fact[b[i]], ifact[b[i] - n]), nCk) * (p & 1 ? -1 : 1)) % M;
+            long long nCk = fact[p + k - 1] * ifact[k - 1] % M * ifact[p] % M;
+            res = (res + fact[b[i]] * ifact[b[i] - n] % M * nCk % M * (p & 1 ? -1 % M : 1)) % M;
             if(res < 0) {
                 res += M;
             }
@@ -70,3 +64,4 @@ int main(){
     test_case();
     return 0;
 }
+```
