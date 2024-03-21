@@ -7,122 +7,100 @@
 #include <iterator>
 #include <set>
 #include <map>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
 #include <stack>
 #include <deque>
 #include <tgmath.h>
+#include <cassert>
+#include <time.h>
+#include <random>
+#include <array>
+    
 using namespace std;
-#define ll long long
-#define ull unsigned long long
+typedef long long ll;
+#define endl "\n"
+#define vi vector<int>
+#define vl vector<long>
+#define vb vector<bool>
+#define vii vector<vector<int>>
+#define mi map<int, int>
+#define pi pair<int, int>
+#define F0R(i,n) for(int i = 0; i < n; ++i)
+#define FOR(i,a,b) for(int i = a; i <= b; ++i)
+#define F0Rd(i,n) for(int i = n-1; ~i; --i)
+#define FORd(i,a,b) for(int i = b; i >= a; --i)
+#define trav(a, x) for(auto &a : x)
 #define f first
 #define s second
-#define endl "\n"
-struct Point{
-    int x ,y;
-    void construct(int xx, int yy){
-        x = xx;
-        y = yy;
-    }
-    bool equals(Point p){
-        return x == p.x && y == p.y;
-    }
-};
+#define pb push_back
+#define sz(v) (int)((v).size())
+#define all(v) v.begin(), v.end()
 
-Point minY;
+template<class T> bool chkmin(T& a, const T& b) { return b < a ? a = b, 1 : 0; }
+template<class T> bool chkmax(T& a, const T& b) { return a < b ? a = b, 1 : 0; }
 
-int getSign(Point a, Point b, Point c){
-    ll x1 = a.x, y1 = a.y;
-    ll x2 = b.x, y2 = b.y;
-    ll x3 = c.x, y3 = c.y;
-    ll area = x1 * y2 + x2 * y3 + x3 * y1 - (x2 * y1 + x3 * y2 + x1 * y3);
-    if(area > 0) {
-        return 1;
-    }
-    else if(area < 0) {
-        return -1;
-    }
-    return 0;
+ll sq(ll a) { 
+    return a*a; 
 }
 
-bool comp1(const Point p1, const Point p2){
-    if(p1.y == p2.y){
-        return p1.x < p2.x; 
-    }
-    return p1.y < p2.y;
+ll norm(const pair<ll,ll>& p) { 
+    return sq(p.f)+sq(p.s); 
 }
 
-int sqrDist(Point a, Point b)  {
-    int dx = a.x - b.x, dy = a.y - b.y;
-    return dx * dx + dy * dy;
+pair<ll,ll> operator-(const pair<ll,ll>& l, const pair<ll,ll>& r) {
+    return pair<ll,ll>(l.f-r.f,l.s-r.s);
 }
 
-int comp2(Point &p1, Point &p2){
-    int order = -getSign(minY, p1, p2);
-    if(order == 0){
-        return sqrDist(minY, p1) < sqrDist(minY, p2);
-    }
-    return (order == -1);
+ll cross(const pair<ll,ll>& a, const pair<ll,ll>& b) { 
+    return a.f*b.s-a.s*b.f; 
+}
+ll cross(const pair<ll,ll>& p, const pair<ll,ll>& a, const pair<ll,ll>& b) {
+    return cross(a-p,b-p);
 }
 
-vector<vector<int>> getHull(Point points[], int n){
-    sort(points, points + n, comp1);
-    minY = points[0];
-
-    sort(points + 1, points + n, comp2);
-    stack<Point> hull;
-    hull.push(points[0]);
-
-    int k = 0;
-    while(k < n){
-        if(!points[0].equals(points[k])){
-            break;
+vector<int> hullInd(const vector<pair<int,int>>& v) {
+    int ind = int(min_element(all(v))-begin(v));
+    vector<int> cand, hull{ind};
+    for(int i = 0; i < sz(v); ++i){
+        if(v[i]!=v[ind]){
+            cand.pb(i);
         }
-        ++k;
     }
 
-    if(k == n){
-        return {{points[0].x, points[0].y}};
-    }
+    sort(all(cand),[&](int a, int b) { // sort by angle, tiebreak by distance
+        pair<ll, ll> x = v[a]-v[ind], y = v[b]-v[ind];
+        ll t = cross(x,y);
+        return t != 0 ? t > 0 : norm(x) < norm(y);
+    });
 
-    hull.push(points[k]);
-    for(int i = k; i < n; ++i){
-        Point prev = hull.top(); hull.pop();
-        while(hull.size() && getSign(hull.top(), prev, points[i]) <= 0){
-            prev = hull.top(); hull.pop();
+    for(auto& c : cand){
+        while (sz(hull) > 1 && cross(v[end(hull)[-2]],v[hull.back()],v[c]) <= 0) {
+            hull.pop_back(); // pop until counterclockwise and size > 1
         }
-        hull.push(prev);
-        hull.push(points[i]);
+        hull.pb(c);
     }
 
-    vector<vector<int>> res;
-    while(hull.size()){
-        res.push_back({hull.top().x, hull.top().y});
-        hull.pop();
-    }
-
-    reverse(res.begin(), res.end());
-    return res;
+    return hull;
 }
+
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cout.tie(0);
 
-    int n, x, y;
+    int n;
     while(scanf("%d", &n) && n){
-        Point points[n];
+        vector<pair<int,int>> pts(n);
         for(int i = 0; i < n; ++i){
-            scanf("%d%d", &x, &y);
-            points[i].construct(x, y);
+            scanf("%d%d", &pts[i].f, &pts[i].s);
         }
-        vector<vector<int>> hull = getHull(points, n);
-        printf("%d\n", hull.size());
-        for(auto& p : hull){
-            printf("%d %d \n", p[0], p[1]);
+
+        vector<int> ret = hullInd(pts);
+        cout << ret.size() << endl;
+        for(auto& a : ret){
+            cout << pts[a].f << " " << pts[a].s << endl;
         }
-    }
-    
-    return 0;
-}
